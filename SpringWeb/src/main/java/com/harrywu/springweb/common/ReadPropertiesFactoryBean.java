@@ -1,4 +1,4 @@
-package com.harrywu.springweb.utils;
+package com.harrywu.springweb.common;
 
 import java.io.IOException;
 import java.util.Properties;

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+    <context:component-scan base-package="com.udn.openup.backend.view.spring" />
+    
+    <!-- Enabling Spring Data web support
+    <beans:bean class="org.springframework.data.web.config.SpringDataWebConfiguration" />
+    -->
+    <!-- If you're using Spring HATEOAS as well register this one *instead* of the former
+    <beans:bean class="org.springframework.data.web.config.HateoasAwareSpringDataWebConfiguration" />
+    -->
+    <annotation-driven content-negotiation-manager="contentNegotiationManager" conversion-service="conversionService">
+      <argument-resolvers>
+          <!-- 接受分頁及排序參數 -->
+          <beans:bean class="org.springframework.data.web.PageableHandlerMethodArgumentResolver" />
+      </argument-resolvers>
+      <message-converters>
+          <!-- Use the HibernateAware mapper instead of the default to fixed Hibernate/JPA lazy-loading issue -->
+          <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+              <beans:property name="objectMapper">
+                  <beans:bean class="com.harrywu.springweb.common.HibernateAwareObjectMapper" />
+              </beans:property>
+          </beans:bean>
+      </message-converters>
+    </annotation-driven>
+    <beans:bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <beans:property name="converters">
+            <beans:set>
+                <beans:bean class="org.springframework.core.convert.support.StringToUUIDConverter"/>
+            </beans:set>
+        </beans:property>
+    </beans:bean>
+    <beans:bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <beans:property name="favorPathExtension" value="false" />
+        <beans:property name="favorParameter" value="true" />
+        <beans:property name="mediaTypes" >
+            <beans:value>
+                json=application/json
+                xml=application/xml
+                3gp=video/3gp
+                mp4=video/mp4
+                webm=video/webm
+                flv=video/x-flv
+            </beans:value>
+        </beans:property>
+    </beans:bean>
+<!--
+    <beans:bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <beans:property name="useDefaultSuffixPattern" value="false" />
+    </beans:bean>
+-->
+    
+
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+    <resources mapping="/resources/**" location="/resources/" />
+    <resources mapping="/styles/**" location="/resources/styles/" />
+    <resources mapping="/scripts/**" location="/resources/scripts/" />
+    <resources mapping="/images/**" location="/resources/images/" />
+    <resources mapping="/fonts/**" location="/resources/fonts/" />
+
+    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/pages/" />
+        <beans:property name="suffix" value=".jsp" />
+<!--
+        <beans:property name="suffix" value="" />
+-->
+    </beans:bean>
+</beans:beans>
